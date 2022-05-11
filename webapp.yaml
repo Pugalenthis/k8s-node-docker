@@ -15,26 +15,13 @@ spec:
         app: webapp
     spec:
       containers:
-        - name: mongodb
-          image: nanajanashia/k8s-demo-app:v1.0
+        - name: webapp
+          image: 7094376336/k8s:latest
           ports:
-            - containerPort: 3000
+            - containerPort: 8000
           env:
-            - name: USER_NAME
-              valueFrom:
-                secretKeyRef:
-                  name: mongo-secret
-                  key: mongo-user
-            - name: USER_PWD
-              valueFrom:
-                secretKeyRef:
-                  name: mongo-secret
-                  key: mongo-password
-            - name: DB_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: mongo-config
-                  key: mongo-url
+            - name: CONNECTIONSTRING
+              value: mongodb://mongo-user:mongo-password@mongo-service:27017/test
 
 ---
 apiVersion: v1
@@ -47,6 +34,10 @@ spec:
     app: webapp
   ports:
     - protocol: TCP
-      port: 3000
-      targetPort: 3000
-      nodePort: 30100
+      port: 8000
+      targetPort: 8000
+      nodePort: 30200
+# curl --request POST \
+#   --url http://192.168.49.2:30200/test \
+#   --header 'content-type: application/json' \
+#   --data '{"msg": "testing"}'
